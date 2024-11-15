@@ -1,8 +1,8 @@
 name: Weekly Dependabot Nudge
 on:
   schedule:
-    # Run at 9am UTC every Monday
-    - cron: "0 9 * * 1"
+    # Run at 17 UTC (9-ish am Pacific) every Monday
+    - cron: "0 17 * * 1"
   workflow_dispatch:
 jobs:
   run:
