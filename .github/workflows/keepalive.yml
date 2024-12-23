@@ -10,7 +10,7 @@ jobs:
     name: Keepalive Workflow
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: gautamkrishnar/keepalive-workflow@995aec69bb3f2b45b20f4e107907992c8715086d # 2.0.8
         with:
           workflow_files: "keepalive.yml, add-maintainer-custom-property.yml, add-runtime-custom-property.yml, check-new-repos.yml, copy-repo-secrets-to-org-secrets.yml, dependabot-auto-dismiss.yml, dependabot-nudge.yml, older-than-2y.yml, renovate-sanity-check.yml"
