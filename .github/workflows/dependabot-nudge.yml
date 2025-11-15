@@ -4,6 +4,8 @@ on:
     # Run at 17 UTC (9-ish am Pacific) every Monday
     - cron: "0 17 * * 1"
   workflow_dispatch:
+permissions: {}
+
 jobs:
   run:
     runs-on: ubuntu-latest
