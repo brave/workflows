@@ -1,8 +1,8 @@
 name: Weekly Dependabot Auto Dismiss
 on:
   schedule:
-    # Run at 24:00 UTC every Monday
-    - cron: "0 0 * * 1"
+    # Run at 24:00 UTC every day
+    - cron: "0 0 * * *"
   workflow_dispatch:
 permissions: {}
 
