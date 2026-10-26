@@ -6,11 +6,20 @@ on:
     - cron: '0 0 22 * *'
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_ADD_RUNTIME_CUSTOM_PROPERTY }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-runtime-custom-property
+          status: in_progress
+          schedule: '0 0 22 * *'
+          checkin_margin: '1440'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ secrets.RUNTIME_REPOSITORY }}
@@ -20,3 +29,15 @@ jobs:
           github_token: ${{ secrets.CUSTOM_PROPERTY_MANAGER_GITHUB_TOKEN }}
           static_repositories: ${{ secrets.STATIC_WEBSITE_REPOSITORIES }}
           runtime_directory: ${{ github.workspace }}
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-runtime-custom-property
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-runtime-custom-property
+          status: error

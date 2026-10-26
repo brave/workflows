@@ -5,14 +5,35 @@ on:
     - cron: '0 0 1 * *'
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_OLDER_THAN_2Y }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-older-than-2y
+          status: in_progress
+          schedule: '0 0 1 * *'
+          checkin_margin: '1440'
       - name: older than 2 years informer
         uses: brave/security-action/actions/older-than-2y@main
         with:
           github_token: ${{ secrets.ORG_READ_GITHUB_TOKEN }}
           slack_token: ${{ secrets.HOTSPOTS_SLACK_TOKEN }}
           debug: false
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-older-than-2y
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-older-than-2y
+          status: error

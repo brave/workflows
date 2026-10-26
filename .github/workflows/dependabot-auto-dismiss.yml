@@ -5,14 +5,35 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_DEPENDABOT_AUTO_DISMISS }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-auto-dismiss
+          status: in_progress
+          schedule: '0 0 * * *'
+          checkin_margin: '60'
       - name: dependabot auto dismiss
         uses: brave/security-action/actions/dependabot-auto-dismiss@main
         with:
           github_token: ${{ secrets.DEPENDABOT_AUTO_DISMISS_GITHUB_TOKEN }}
           slack_token: ${{ secrets.HOTSPOTS_SLACK_TOKEN }}
           debug: false
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-auto-dismiss
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-auto-dismiss
+          status: error
