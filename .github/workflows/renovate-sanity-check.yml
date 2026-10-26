@@ -6,14 +6,35 @@ on:
     - cron: '0 0 15 * *'
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_RENOVATE_SANITY_CHECK }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-renovate-sanity-check
+          status: in_progress
+          schedule: '0 0 15 * *'
+          checkin_margin: '1440'
       - name: Renovate Sanity Check
         uses: brave/security-action/actions/renovate-sanity-check@main
         with:
           github_token: ${{ secrets.CUSTOM_PROPERTY_MANAGER_GITHUB_TOKEN }}
           slack_token: ${{ secrets.HOTSPOTS_SLACK_TOKEN }}
           debug: false
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-renovate-sanity-check
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-renovate-sanity-check
+          status: error

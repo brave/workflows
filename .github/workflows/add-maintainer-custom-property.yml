@@ -6,14 +6,35 @@ on:
     - cron: '0 0 27 * *'
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_ADD_MAINTAINER_CUSTOM_PROPERTY }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-maintainer-custom-property
+          status: in_progress
+          schedule: '0 0 27 * *'
+          checkin_margin: '1440'
       - uses: brave/security-action/actions/add-maintainer-custom-property@main
         with:
           ignore_maintainers: brave-builds,brave-browser-releases,brave-support-admin
           debug: false
           github_token: ${{ secrets.CUSTOM_PROPERTY_MANAGER_GITHUB_TOKEN }}
           slack_token: ${{ secrets.HOTSPOTS_SLACK_TOKEN }}
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-maintainer-custom-property
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-add-maintainer-custom-property
+          status: error

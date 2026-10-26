@@ -5,11 +5,20 @@ on:
     - cron: "0 17 * * 1"
   workflow_dispatch:
 permissions: {}
+env:
+  SENTRY_CRON_URL: ${{ secrets.SENTRY_CRON_WORKFLOWS_DEPENDABOT_NUDGE }}
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: sentry cron check-in
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-nudge
+          status: in_progress
+          schedule: '0 17 * * 1'
+          checkin_margin: '120'
       - name: dependabot nudge
         uses: brave/security-action/actions/dependabot-nudge@main
         with:
@@ -17,3 +26,15 @@ jobs:
           slack_token: ${{ secrets.HOTSPOTS_SLACK_TOKEN }}
           gh_to_slack_user_map: ${{ secrets.GH_TO_SLACK_USER_MAP }}
           debug: false
+      - name: sentry cron ok
+        if: success()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-nudge
+          status: ok
+      - name: sentry cron error
+        if: failure()
+        uses: brave/security-action/actions/sentry-cron@main
+        with:
+          monitor: workflows-dependabot-nudge
+          status: error
