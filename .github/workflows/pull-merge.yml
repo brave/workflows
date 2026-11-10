@@ -13,7 +13,7 @@ jobs:
       group: ${{ github.head_ref }}-init
       cancel-in-progress: true
     name: puLL-Merge
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
     steps:

@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   run:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Renovate Sanity Check
         uses: brave/security-action/actions/renovate-sanity-check@main

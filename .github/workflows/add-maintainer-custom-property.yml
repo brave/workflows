@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   run:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: brave/security-action/actions/add-maintainer-custom-property@main
         with:
