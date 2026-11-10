@@ -8,7 +8,7 @@ permissions: {}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: older than 2 years informer
         uses: brave/security-action/actions/older-than-2y@main
