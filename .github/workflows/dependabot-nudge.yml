@@ -9,6 +9,11 @@ permissions: {}
 jobs:
   run:
     runs-on: ubuntu-24.04
+    # Toolchain (node, pnpm, baked dependency store) comes from the
+    # prebuilt image, so the scheduled jobs install nothing from the
+    # network at job time (see brave/security-action#1047).
+    container:
+      image: ghcr.io/brave/security-action:latest
     steps:
       - name: dependabot nudge
         uses: brave/security-action/actions/dependabot-nudge@main
