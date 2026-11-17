@@ -13,6 +13,15 @@ jobs:
   security:
     name: security
     runs-on: ubuntu-24.04
+    # Prebuilt runtime image (ghcr.io/brave/security-action, built by
+    # brave/security-action .github/workflows/image.yml): every tool the
+    # action needs is baked — no setup-python/setup-uv/pnpm/corepack/
+    # opengrep/landrun/reviewdog downloads and no apt from the flaky
+    # azure.archive.ubuntu.com mirrors (actions/runner-images#14823).
+    # Floating tag on purpose; the image is rebuilt on every push that
+    # changes the baked toolchain.
+    container:
+      image: ghcr.io/brave/security-action:latest
     strategy:
       fail-fast: false
     steps:

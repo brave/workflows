@@ -14,6 +14,15 @@ jobs:
       cancel-in-progress: true
     name: puLL-Merge
     runs-on: ubuntu-24.04
+    # Prebuilt runtime image (ghcr.io/brave/pull-merge, built by
+    # brave/pull-merge .github/workflows/image.yml): node, pnpm,
+    # patchutils/filterdiff and node_modules are baked — no setup-node
+    # tarball, no apt patchutils install, no npm registry dependency on
+    # the happy path (actions/runner-images#14823).
+    # Floating tag on purpose; the image is rebuilt on every push that
+    # changes the baked toolchain.
+    container:
+      image: ghcr.io/brave/pull-merge:latest
     strategy:
       fail-fast: false
     steps:
